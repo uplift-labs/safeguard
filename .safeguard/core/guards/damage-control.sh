@@ -86,8 +86,8 @@ case "$CMD" in
   *git\ stash\ drop*) ask "git stash drop (destroys a stash)" ;;
   *git\ filter-branch*) ask "git filter-branch (rewrites history)" ;;
   *git\ reflog\ expire*) ask "git reflog expire (removes reflog entries)" ;;
-  *git\ checkout\ --\ .*) ask "git checkout -- . (discards all working changes)" ;;
-  *git\ restore\ .*) ask "git restore . (discards all working changes)" ;;
+  *git\ checkout\ --\ .|*git\ checkout\ --\ .\ *) ask "git checkout -- . (discards all working changes)" ;;
+  *git\ restore\ .|*git\ restore\ .\ *) ask "git restore . (discards all working changes)" ;;
   *git\ branch\ -D*) ask "git branch -D (force-deletes branch)" ;;
 esac
 
