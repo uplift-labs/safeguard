@@ -94,7 +94,7 @@ bash tests/run.sh damage-control  # single guard
 
 ## Related
 
-- [singularity-sandbox](https://github.com/uplift-labs/singularity-sandbox) — Worktree isolation for AI coding sessions (complementary product)
+- [worktree-sandbox](https://github.com/uplift-labs/worktree-sandbox) — Worktree isolation for AI coding sessions (complementary product)
 
 ## License
 
