@@ -1,0 +1,8 @@
+{
+  "session_id":"test-ess-11",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Write",
+  "tool_input":{"file_path":"{{TMPDIR}}/handler.py","content":"def process():\n    try:\n        do_work()\n    except:\n        pass"}
+}

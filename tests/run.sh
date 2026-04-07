@@ -49,7 +49,7 @@ run_fixture_tests() {
       fname=$(basename "$fixture" .json)
       tmpdir=$(mktemp -d)
       fixture_content=$(sed "s|{{TMPDIR}}|$tmpdir|g" "$fixture")
-      for companion in "$guard_dir"/*.md "$guard_dir"/*.txt; do
+      for companion in "$guard_dir"/*.md "$guard_dir"/*.txt "$guard_dir"/.*.rs; do
         [ -f "$companion" ] && cp "$companion" "$tmpdir/"
       done
       if [ "$guard" = "loop-detector" ]; then
