@@ -1,0 +1,8 @@
+{
+  "session_id":"test-004",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Write",
+  "tool_input": {"file_path":"{{TMPDIR}}/readme.md","content":"# Error handling\nWe use catch blocks to handle errors."}
+}

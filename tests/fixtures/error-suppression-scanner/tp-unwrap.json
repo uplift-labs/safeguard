@@ -1,0 +1,8 @@
+{
+  "session_id":"test-002",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Write",
+  "tool_input": {"file_path":"{{TMPDIR}}/main.rs","content":"fn main() {\n    let config = std::fs::read_to_string(\"config.toml\").unwrap();\n    let parsed: Config = toml::from_str(&config).unwrap();\n}"}
+}

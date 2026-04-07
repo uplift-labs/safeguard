@@ -1,0 +1,8 @@
+{
+  "session_id":"test-001",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Edit",
+  "tool_input": {"file_path":"{{TMPDIR}}/app.py","old_string":"placeholder","new_string":"try:\n    response = requests.get(url)\nexcept: pass"}
+}

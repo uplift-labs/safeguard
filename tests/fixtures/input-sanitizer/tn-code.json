@@ -1,0 +1,8 @@
+{
+  "session_id":"test-inject-04",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Read",
+  "tool_input": {"file_path":"{{TMPDIR}}/tn-code.py"}
+}

@@ -1,0 +1,8 @@
+{
+  "session_id":"test-005",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Edit",
+  "tool_input": {"file_path":"{{TMPDIR}}/helpers.rs","old_string":"placeholder","new_string":"// intentional: test helper, errors expected\nlet _ = std::fs::remove_file(path).unwrap();"}
+}

@@ -1,0 +1,8 @@
+{
+  "session_id":"test-sfg-05",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Write",
+  "tool_input":{"file_path":"/project/.env.example"}
+}

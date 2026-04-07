@@ -1,0 +1,8 @@
+{
+  "session_id":"test-sfg-02",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Edit",
+  "tool_input":{"file_path":"/home/user/.ssh/id_rsa"}
+}

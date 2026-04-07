@@ -1,0 +1,8 @@
+{
+  "session_id":"test-003",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Edit",
+  "tool_input": {"file_path":"{{TMPDIR}}/app.py","old_string":"placeholder","new_string":"try:\n    response = requests.get(url, timeout=30)\nexcept requests.RequestException as e:\n    logger.error(\"Failed: %s\", e)\n    raise"}
+}
