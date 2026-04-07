@@ -27,7 +27,8 @@ while [ $# -gt 0 ]; do
 done
 
 [ -z "$TARGET" ] && TARGET="$(pwd)"
-[ -d "$TARGET/.git" ] || { printf 'not a git repo: %s\n' "$TARGET" >&2; exit 1; }
+# .git is a directory in normal repos, a file in worktrees
+[ -d "$TARGET/.git" ] || [ -f "$TARGET/.git" ] || { printf 'not a git repo: %s\n' "$TARGET" >&2; exit 1; }
 
 INSTALL_ROOT="$TARGET/.safeguard"
 mkdir -p "$INSTALL_ROOT/core/lib" "$INSTALL_ROOT/core/cmd" "$INSTALL_ROOT/core/guards"
