@@ -18,7 +18,7 @@ bash <(curl -sSL https://raw.githubusercontent.com/sergey-akhalkov/safeguard/mai
 
 | Guard | Threat | Action |
 |-------|--------|--------|
-| **damage-control** | Destructive shell commands (`rm -rf /`, `DROP TABLE`, `terraform destroy`) | Block or ask |
+| **damage-control** | Destructive shell commands (`rm -rf /`, `DROP TABLE`, `terraform destroy`, `vault kv destroy`, `helm uninstall`, `rsync --delete`, 40+ patterns) | Block or ask |
 | **sensitive-file-guard** | Writes to credentials (`.env`, `.ssh/*`, `*.pem`, `*.tfstate`) | Block |
 | **input-sanitizer** | Prompt injection patterns in files being read | Warn |
 | **loop-detector** | Same command repeated 25+ times (AI stuck in loop) | Block |
@@ -86,7 +86,7 @@ bash tests/run.sh damage-control  # single guard
 
 - Zero runtime dependencies (bash + git are already everywhere)
 - Guard hooks are bash scripts by convention in Claude Code
-- Small surface area (~400 lines of production code across 6 guards + multiplexer)
+- Small surface area (~500 lines of production code across 6 guards + multiplexer)
 - Portable across all platforms without compilation
 
 ## Related

@@ -1,0 +1,8 @@
+{
+  "session_id":"test-dc-40",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Bash",
+  "tool_input":{"command":"vault kv get secret/myapp/config"}
+}

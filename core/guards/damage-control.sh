@@ -51,6 +51,10 @@ fi
 case "$CMD" in
   *mkfs*) deny "filesystem format operation" ;;
   *dd\ *of=/dev/*) deny "raw device write" ;;
+  *fdisk\ *) deny "disk partition operation" ;;
+  *parted\ *) deny "disk partition operation" ;;
+  *wipefs\ *) deny "filesystem signature wipe" ;;
+  *mdadm\ *--zero-superblock*) deny "RAID superblock wipe" ;;
 esac
 
 case "$CMD" in
@@ -64,6 +68,7 @@ esac
 
 case "$CMD" in
   *shutdown*|*reboot*|*init\ 0*|*init\ 6*|*poweroff*) deny "system power operation" ;;
+  *systemctl\ poweroff*|*systemctl\ reboot*|*systemctl\ halt*) deny "system power operation (systemctl)" ;;
 esac
 
 case "$CMD" in
@@ -128,6 +133,75 @@ esac
 
 case "$CMD_LOWER" in
   *mongo*dropdatabase*|*mongo*dropcollection*|*mongosh*dropdatabase*) ask "MongoDB drop operation" ;;
+esac
+
+# --- Secrets Management ---
+case "$CMD" in
+  *vault\ kv\ destroy*|*vault\ kv\ metadata-delete*) ask "Vault secret destruction" ;;
+  *vault\ secrets\ disable*) ask "Vault secrets engine disable (data loss)" ;;
+  *vault\ token\ revoke*) ask "Vault token revocation" ;;
+  *aws\ secretsmanager\ delete-secret*) ask "AWS Secrets Manager delete" ;;
+  *aws\ ssm\ delete-parameter*) ask "AWS SSM parameter delete" ;;
+esac
+
+# --- CI/CD ---
+case "$CMD" in
+  *gh\ secret\ delete*|*gh\ secret\ remove*) ask "GitHub secret deletion" ;;
+  *gh\ variable\ delete*|*gh\ variable\ remove*) ask "GitHub variable deletion" ;;
+  *gh\ workflow\ disable*) ask "GitHub workflow disable" ;;
+  *glab\ variable\ delete*) ask "GitLab variable deletion" ;;
+  *glab\ ci\ delete*) ask "GitLab CI artifact/pipeline deletion" ;;
+esac
+
+# --- Extended Terraform ---
+case "$CMD" in
+  *terraform\ state\ rm*) ask "terraform state rm (removes resource from state)" ;;
+  *terraform\ state\ mv*) ask "terraform state mv (moves resource in state)" ;;
+  *terraform\ force-unlock*) ask "terraform force-unlock (breaks state lock)" ;;
+  *terraform\ apply*-auto-approve*) ask "terraform apply -auto-approve (no review)" ;;
+esac
+
+# --- Extended Docker ---
+case "$CMD" in
+  *docker\ compose\ down*-v*|*docker\ compose\ down*--volumes*) ask "docker compose down -v (destroys volumes)" ;;
+  *docker\ compose\ down*--rmi*) ask "docker compose down --rmi (removes images)" ;;
+  *docker\ stop*\$\(*|*docker\ stop*\`*) ask "docker stop with subshell (bulk stop)" ;;
+  *docker\ kill*\$\(*|*docker\ kill*\`*) ask "docker kill with subshell (bulk kill)" ;;
+esac
+
+# --- Extended Kubernetes / Helm ---
+case "$CMD" in
+  *kubectl\ delete*--all*) ask "kubectl delete --all (bulk resource deletion)" ;;
+  *helm\ uninstall*|*helm\ delete*) ask "Helm release deletion" ;;
+esac
+
+# --- Cloud Storage ---
+case "$CMD" in
+  *gsutil\ rm\ -r*|*gsutil\ rb*) ask "GCS bucket/object deletion" ;;
+  *gcloud\ storage\ buckets\ delete*|*gcloud\ storage\ rm*) ask "GCS storage deletion" ;;
+  *az\ storage\ container\ delete*|*az\ storage\ blob\ delete-batch*) ask "Azure storage deletion" ;;
+  *aws\ s3api\ delete-bucket*|*aws\ s3api\ delete-objects*) ask "AWS S3 API deletion" ;;
+  *aws\ s3\ sync*--delete*) ask "AWS S3 sync --delete (removes target files)" ;;
+esac
+
+# --- Database CLI tools ---
+case "$CMD" in
+  *dropdb\ *) ask "PostgreSQL dropdb (destroys database)" ;;
+  *dropuser\ *) ask "PostgreSQL dropuser (removes user)" ;;
+  *mysqladmin\ *drop*) ask "MySQL database drop" ;;
+esac
+
+# --- Package Managers ---
+case "$CMD" in
+  *npm\ unpublish*) ask "npm unpublish (removes package from registry)" ;;
+  *cargo\ yank*) ask "cargo yank (removes crate version)" ;;
+esac
+
+# --- Remote Operations ---
+case "$CMD" in
+  *rsync*--delete*|*rsync*--del\ *|*rsync*--del$) ask "rsync --delete (removes files at destination)" ;;
+  *ssh\ *rm\ -rf*|*ssh\ *rm\ -r\ *) ask "remote rm -rf via SSH" ;;
+  *ssh\ *git\ reset\ --hard*) ask "remote git reset --hard via SSH" ;;
 esac
 
 exit 0

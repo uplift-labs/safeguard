@@ -1,0 +1,8 @@
+{
+  "session_id":"test-dc-46",
+  "cwd":"{{TMPDIR}}",
+  "hook_event_name":"PreToolUse",
+  "transcript_path":"{{TMPDIR}}/transcript.jsonl",
+  "tool_name":"Bash",
+  "tool_input":{"command":"gsutil ls gs://my-bucket"}
+}

@@ -56,11 +56,19 @@ are short-circuited.
 
 Blocks or escalates destructive shell commands.
 
-- **BLOCK:** recursive rm of system paths, filesystem format ops, raw device writes,
-  kill-all, world-writable permissions, system power ops, fork bombs.
-- **ASK:** `git reset --hard`, `git push --force`, `docker system prune`,
-  `terraform destroy`, SQL DROP/TRUNCATE/DELETE-without-WHERE, Redis flush,
-  MongoDB drop, and similar.
+- **BLOCK:** recursive rm of system paths, filesystem format ops (`mkfs`),
+  raw device writes (`dd of=/dev`), disk partition ops (`fdisk`, `parted`, `wipefs`),
+  RAID superblock wipe (`mdadm --zero-superblock`), kill-all, world-writable
+  permissions, system power ops (including `systemctl`), fork bombs.
+- **ASK:** git destructive ops (`reset --hard`, `push --force`, `clean -f`,
+  `branch -D`, `filter-branch`, etc.), Docker (`system prune`, `compose down -v`,
+  bulk stop/kill), Terraform (`destroy`, `apply -auto-approve`, `state rm/mv`,
+  `force-unlock`), Pulumi destroy, Kubernetes (`kubectl delete --all`,
+  `helm uninstall`), cloud storage (AWS S3/S3API, GCS/gsutil, Azure storage),
+  secrets management (Vault, AWS Secrets Manager/SSM), CI/CD (GitHub `gh secret/variable`,
+  GitLab `glab`), SQL DROP/TRUNCATE/DELETE-without-WHERE, Redis flush, MongoDB drop,
+  database CLI (`dropdb`, `dropuser`, `mysqladmin drop`), package managers
+  (`npm unpublish`, `cargo yank`), remote ops (`rsync --delete`, `ssh rm -rf`).
 
 ### sensitive-file-guard
 
