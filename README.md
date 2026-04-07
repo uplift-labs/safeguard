@@ -10,8 +10,11 @@ Pure bash. Zero dependencies. Install and forget.
 # Install into your project (with Claude Code hooks)
 bash install.sh --target /path/to/repo --with-claude-code
 
-# Or one-liner from GitHub
-bash <(curl -sSL https://raw.githubusercontent.com/sergey-akhalkov/safeguard/main/remote-install.sh) --with-claude-code
+# Or one-liner from GitHub (pinned to v1.0.0)
+bash <(curl -sSL https://raw.githubusercontent.com/uplift-labs/safeguard/v1.0.0/remote-install.sh) --with-claude-code
+
+# Latest from main (may include unreleased changes)
+bash <(curl -sSL https://raw.githubusercontent.com/uplift-labs/safeguard/main/remote-install.sh) --with-claude-code
 ```
 
 ## What It Protects Against
@@ -91,7 +94,7 @@ bash tests/run.sh damage-control  # single guard
 
 ## Related
 
-- [singularity-sandbox](https://github.com/sergey-akhalkov/singularity-sandbox) — Worktree isolation for AI coding sessions (complementary product)
+- [singularity-sandbox](https://github.com/uplift-labs/singularity-sandbox) — Worktree isolation for AI coding sessions (complementary product)
 
 ## License
 
