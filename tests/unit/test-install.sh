@@ -52,17 +52,15 @@ out=$(bash "$INSTALLER" --badarg 2>&1)
 ec=$?
 assert_exit "2" "$ec" "unknown arg exits 2"
 
-# Test 6: .gitignore idempotency — installing twice does not duplicate entry
+# Test 6: install does not modify .gitignore (safeguard should be committed)
 tmpd=$(mktemp -d)
 git init "$tmpd" >/dev/null 2>&1
 bash "$INSTALLER" --target "$tmpd" >/dev/null 2>&1
-bash "$INSTALLER" --target "$tmpd" >/dev/null 2>&1
-count=$(grep -cF '/.safeguard/' "$tmpd/.gitignore")
-if [ "$count" -eq 1 ]; then
+if [ ! -f "$tmpd/.gitignore" ]; then
   _test_pass=$((_test_pass + 1))
 else
   _test_fail=$((_test_fail + 1))
-  printf 'FAIL: .gitignore has %s entries for /.safeguard/ (expected 1)\n' "$count" >&2
+  printf 'FAIL: install.sh should not create .gitignore\n' >&2
 fi
 rm -rf "$tmpd"
 
