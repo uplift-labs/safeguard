@@ -13,7 +13,7 @@ INSTALLER="$ROOT/install.sh"
 tmpd=$(mktemp -d)
 git init "$tmpd" >/dev/null 2>&1
 bash "$INSTALLER" --target "$tmpd" >/dev/null 2>&1
-guard_count=$(ls "$tmpd/.safeguard/core/guards/"*.sh 2>/dev/null | wc -l)
+guard_count=$(ls "$tmpd/.uplift/safeguard/core/guards/"*.sh 2>/dev/null | wc -l)
 if [ "$guard_count" -ge 6 ]; then
   _test_pass=$((_test_pass + 1))
 else
@@ -26,7 +26,7 @@ rm -rf "$tmpd"
 tmpd=$(mktemp -d)
 git init "$tmpd" >/dev/null 2>&1
 bash "$INSTALLER" --target "$tmpd" --with-claude-code >/dev/null 2>&1
-hook_count=$(ls "$tmpd/.safeguard/adapter/hooks/"*.sh 2>/dev/null | wc -l)
+hook_count=$(ls "$tmpd/.uplift/safeguard/adapter/hooks/"*.sh 2>/dev/null | wc -l)
 if [ "$hook_count" -ge 4 ] && [ -f "$tmpd/.claude/settings.json" ]; then
   _test_pass=$((_test_pass + 1))
 else

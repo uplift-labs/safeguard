@@ -12,7 +12,7 @@ ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 TMPD=$(mktemp -d)
 git init "$TMPD" >/dev/null 2>&1
 bash "$ROOT/install.sh" --target "$TMPD" --with-claude-code >/dev/null 2>&1
-ADAPTER="$TMPD/.safeguard/adapter/hooks"
+ADAPTER="$TMPD/.uplift/safeguard/adapter/hooks"
 
 # Test 1: pre-bash BLOCK → permissionDecision deny
 out=$(echo '{"tool_name":"Bash","tool_input":{"command":"mkfs /dev/safeguard-test"}}' \
