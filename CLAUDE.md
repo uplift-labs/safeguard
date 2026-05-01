@@ -16,6 +16,7 @@ bash tests/run.sh <guard>      # single guard (e.g. damage-control)
 
 bash install.sh --target <repo>                     # install core only
 bash install.sh --target <repo> --with-claude-code  # install core + CC adapter
+bash install.sh --target <repo> --with-codex        # install core + Codex adapter
 ```
 
 ## Architecture
@@ -25,7 +26,8 @@ bash install.sh --target <repo> --with-claude-code  # install core + CC adapter
 - **`core/cmd/safeguard-run.sh`** — single public entry point (multiplexer). Takes a guard group name, reads JSON on stdin, runs guards, emits tagged text (`BLOCK:`, `ASK:`, `WARN:`, or empty). Always exits `0` (fail-open).
 - **`core/guards/*.sh`** — 6 independent guard scripts. Each reads JSON on stdin and emits tagged text. Internal, not public API.
 - **`core/lib/json-field.sh`** — shared JSON field extraction. Internal helper.
-- **`adapters/claude-code/hooks/*.sh`** — thin translation layer (~20 lines per hook) that converts between Claude Code's JSON protocol and core's text protocol.
+- **`adapters/claude-code/hooks/*.sh`** — thin translation layer that converts between Claude Code's JSON protocol and core's text protocol.
+- **`adapters/codex/hooks/*.sh`** — thin translation layer that converts between Codex hooks and core's text protocol. Codex `ASK:` results deny by default because Codex `PreToolUse` does not currently enforce ask decisions.
 
 ### Fail-open safety-net policy
 
