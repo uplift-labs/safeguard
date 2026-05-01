@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Safeguard JSON merge tool.
 
-Merges hook definitions into an existing Claude Code settings.json.
+Merges hook definitions into an existing host settings/hooks JSON file.
 Idempotent: running twice produces the same result.
 
 Usage:
@@ -11,7 +11,10 @@ import json
 import sys
 from pathlib import Path
 
-MARKER = "/safeguard/adapter/hooks/"
+MARKERS = [
+    "/safeguard/adapter/hooks/",
+    "/safeguard/adapter-codex/hooks/",
+]
 LEGACY_MARKERS = [".safeguard/adapter/hooks/"]
 
 
@@ -27,7 +30,7 @@ def hook_key(hook):
 def is_safeguard_hook(hook):
     """Check if a hook was installed by safeguard."""
     cmd = hook.get("command", "")
-    if MARKER in cmd:
+    if any(marker in cmd for marker in MARKERS):
         return True
     return any(m in cmd for m in LEGACY_MARKERS)
 
