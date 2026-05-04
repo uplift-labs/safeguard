@@ -38,9 +38,14 @@ def is_safeguard_hook(hook):
 def merge_matcher_group(existing_group, new_group):
     """Merge hooks within a matcher group, skipping duplicates."""
     existing_hooks = existing_group.get("hooks", [])
+    new_hooks = new_group.get("hooks", [])
+
+    if any(is_safeguard_hook(h) for h in new_hooks):
+        existing_hooks = [h for h in existing_hooks if not is_safeguard_hook(h)]
+
     existing_keys = {hook_key(h): i for i, h in enumerate(existing_hooks)}
 
-    for hook in new_group.get("hooks", []):
+    for hook in new_hooks:
         key = hook_key(hook)
         if key in existing_keys:
             if is_safeguard_hook(hook):

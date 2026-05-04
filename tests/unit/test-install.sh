@@ -73,23 +73,41 @@ else
 fi
 rm -rf "$tmpd"
 
-# Test 5: non-git directory → exit 1
+# Test 5: --with-claude-code migrates legacy hook paths to current prefix
+tmpd=$(mktemp -d)
+git init "$tmpd" >/dev/null 2>&1
+mkdir -p "$tmpd/.claude" "$tmpd/.safeguard"
+printf '%s\n' '{"hooks":{"PreToolUse":[{"matcher":"Bash","hooks":[{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/.safeguard/adapter/hooks/pre-bash.sh\"","timeout":10000},{"type":"command","command":"bash \"$CLAUDE_PROJECT_DIR/.other/hook.sh\""}]}]}}' > "$tmpd/.claude/settings.json"
+bash "$INSTALLER" --target "$tmpd" --with-claude-code >/dev/null 2>&1
+if [ -d "$tmpd/.uplift/safeguard" ] \
+  && [ ! -d "$tmpd/.safeguard" ] \
+  && grep -qF '.uplift/safeguard/adapter/hooks/pre-bash.sh' "$tmpd/.claude/settings.json" \
+  && ! grep -qF '.safeguard/adapter/hooks/pre-bash.sh' "$tmpd/.claude/settings.json" \
+  && grep -qF '.other/hook.sh' "$tmpd/.claude/settings.json"; then
+  _test_pass=$((_test_pass + 1))
+else
+  _test_fail=$((_test_fail + 1))
+  printf 'FAIL: --with-claude-code should replace legacy .safeguard hook paths\n' >&2
+fi
+rm -rf "$tmpd"
+
+# Test 6: non-git directory → exit 1
 tmpd=$(mktemp -d)
 out=$(bash "$INSTALLER" --target "$tmpd" 2>&1)
 ec=$?
 assert_exit "1" "$ec" "non-git repo exits 1"
 rm -rf "$tmpd"
 
-# Test 6: --help shows usage text
+# Test 7: --help shows usage text
 out=$(bash "$INSTALLER" --help 2>&1)
 assert_contains "$out" "install" "--help shows usage"
 
-# Test 7: unknown argument → exit 2
+# Test 8: unknown argument → exit 2
 out=$(bash "$INSTALLER" --badarg 2>&1)
 ec=$?
 assert_exit "2" "$ec" "unknown arg exits 2"
 
-# Test 8: install does not modify .gitignore (safeguard should be committed)
+# Test 9: install does not modify .gitignore (safeguard should be committed)
 tmpd=$(mktemp -d)
 git init "$tmpd" >/dev/null 2>&1
 bash "$INSTALLER" --target "$tmpd" >/dev/null 2>&1

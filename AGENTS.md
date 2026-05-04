@@ -3,7 +3,7 @@
 ## Project
 
 - `safeguard` is a Bash-only safety layer. The stable public API is `core/cmd/safeguard-run.sh`; `core/guards/` and `core/lib/` are internal.
-- Product source is `core/`, `adapters/`, `tests/`, `install.sh`, and `remote-install.sh`. Do not make product changes in the checked-in `.safeguard/` local install copy or `.uplift/sandbox/` worktree-sandbox tooling unless that artifact is the task.
+- Product source is `core/`, `adapters/`, `tests/`, `install.sh`, and `remote-install.sh`. Do not make product changes in the checked-in `.uplift/safeguard/` local install copy or `.uplift/sandbox/` worktree-sandbox tooling unless that artifact is the task.
 
 ## Commands
 
