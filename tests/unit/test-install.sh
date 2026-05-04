@@ -119,4 +119,39 @@ else
 fi
 rm -rf "$tmpd"
 
+# Test 10: --with-opencode installs server/TUI plugins and TUI config
+tmpd=$(mktemp -d)
+git init "$tmpd" >/dev/null 2>&1
+bash "$INSTALLER" --target "$tmpd" --with-opencode >/dev/null 2>&1
+js_count=$(ls "$tmpd/.uplift/safeguard/adapter-opencode/plugins/"*.js 2>/dev/null | wc -l)
+if [ "$js_count" -ge 3 ] \
+  && [ -f "$tmpd/.opencode/plugins/safeguard-server.js" ] \
+  && [ -f "$tmpd/.opencode/plugins/safeguard-tui/index.js" ] \
+  && [ -f "$tmpd/.opencode/tui.json" ] \
+  && grep -qF './plugins/safeguard-tui' "$tmpd/.opencode/tui.json"; then
+  _test_pass=$((_test_pass + 1))
+else
+  _test_fail=$((_test_fail + 1))
+  printf 'FAIL: --with-opencode should install adapter plugins and TUI config\n' >&2
+fi
+rm -rf "$tmpd"
+
+# Test 11: --with-opencode is idempotent and honors custom prefix
+tmpd=$(mktemp -d)
+git init "$tmpd" >/dev/null 2>&1
+mkdir -p "$tmpd/.opencode"
+printf '%s\n' '{"theme":"system","plugin":["existing-plugin"]}' > "$tmpd/.opencode/tui.json"
+bash "$INSTALLER" --target "$tmpd" --prefix vendor --with-opencode >/dev/null 2>&1
+bash "$INSTALLER" --target "$tmpd" --prefix vendor --with-opencode >/dev/null 2>&1
+plugin_count=$(grep -oF './plugins/safeguard-tui' "$tmpd/.opencode/tui.json" | wc -l | tr -d ' ')
+if [ "$plugin_count" -eq 1 ] \
+  && grep -qF 'existing-plugin' "$tmpd/.opencode/tui.json" \
+  && grep -qF '../../vendor/safeguard/adapter-opencode/plugins/safeguard-server.js' "$tmpd/.opencode/plugins/safeguard-server.js"; then
+  _test_pass=$((_test_pass + 1))
+else
+  _test_fail=$((_test_fail + 1))
+  printf 'FAIL: --with-opencode should be idempotent and honor custom prefix\n' >&2
+fi
+rm -rf "$tmpd"
+
 test_summary

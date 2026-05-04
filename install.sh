@@ -2,7 +2,7 @@
 # install.sh — install safeguard into a target git repo.
 #
 # Usage:
-#   bash install.sh [--target <repo-dir>] [--prefix <dir>] [--with-claude-code] [--with-codex]
+#   bash install.sh [--target <repo-dir>] [--prefix <dir>] [--with-claude-code] [--with-codex] [--with-opencode]
 #
 # By default installs only the core guards. Adapter flags install host-specific
 # hooks and merge their config into the host's project settings.
@@ -14,6 +14,7 @@ TARGET=""
 PREFIX=".uplift"
 WITH_CC=0
 WITH_CODEX=0
+WITH_OPENCODE=0
 TMP_FILES=""
 
 cleanup_tmp_files() {
@@ -28,8 +29,9 @@ while [ $# -gt 0 ]; do
     --prefix)           PREFIX="$2"; shift 2 ;;
     --with-claude-code) WITH_CC=1; shift ;;
     --with-codex)       WITH_CODEX=1; shift ;;
+    --with-opencode)    WITH_OPENCODE=1; shift ;;
     -h|--help)
-      sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+      sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'
       exit 0
       ;;
     *) printf 'unknown arg: %s\n' "$1" >&2; exit 2 ;;
@@ -70,6 +72,21 @@ sync_sh_dir() {
   }
 }
 
+sync_js_dir() {
+  local src="$1" dest="$2"
+  # shellcheck disable=SC2206
+  local files=( "$src"/*.js )
+  if [ ! -e "${files[0]}" ]; then
+    printf 'install: no *.js files in %s\n' "$src" >&2
+    exit 1
+  fi
+  rm -f "$dest"/*.js
+  cp "${files[@]}" "$dest/" || {
+    printf 'install: copy failed %s -> %s\n' "$src" "$dest" >&2
+    exit 1
+  }
+}
+
 printf '[install] copying core to %s\n' "$INSTALL_ROOT/core"
 sync_sh_dir "$SCRIPT_DIR/core/lib"    "$INSTALL_ROOT/core/lib"
 sync_sh_dir "$SCRIPT_DIR/core/cmd"    "$INSTALL_ROOT/core/cmd"
@@ -77,6 +94,7 @@ sync_sh_dir "$SCRIPT_DIR/core/guards" "$INSTALL_ROOT/core/guards"
 chmod +x "$INSTALL_ROOT/core/cmd/"*.sh "$INSTALL_ROOT/core/guards/"*.sh
 
 MERGER="$SCRIPT_DIR/core/lib/json-merge.py"
+OPENCODE_TUI_MERGER="$SCRIPT_DIR/core/lib/opencode-tui-merge.py"
 
 require_python3_for_json_merge() {
   if ! command -v python3 >/dev/null 2>&1; then
@@ -170,9 +188,36 @@ if [ "$WITH_CODEX" -eq 1 ]; then
   enable_codex_hooks_feature "$CODEX_CONFIG"
 fi
 
+if [ "$WITH_OPENCODE" -eq 1 ]; then
+  OPENCODE_ADAPTER_DIR="$INSTALL_ROOT/adapter-opencode"
+  mkdir -p "$OPENCODE_ADAPTER_DIR/plugins"
+  printf '[install] copying OpenCode adapter to %s\n' "$OPENCODE_ADAPTER_DIR"
+  sync_js_dir "$SCRIPT_DIR/adapters/opencode/plugins" "$OPENCODE_ADAPTER_DIR/plugins"
+
+  OPENCODE_DIR="$TARGET/.opencode"
+  OPENCODE_PLUGINS="$OPENCODE_DIR/plugins"
+  OPENCODE_TUI_PLUGIN_DIR="$OPENCODE_PLUGINS/safeguard-tui"
+  mkdir -p "$OPENCODE_PLUGINS" "$OPENCODE_TUI_PLUGIN_DIR"
+
+  JS_PREFIX=$(printf '%s' "$PREFIX" | sed "s|\\\\|/|g; s|'|\\\\'|g")
+  printf '%s\n' \
+    "'use strict'" \
+    "module.exports = require('../../$JS_PREFIX/safeguard/adapter-opencode/plugins/safeguard-server.js')" \
+    > "$OPENCODE_PLUGINS/safeguard-server.js"
+  printf '%s\n' \
+    "'use strict'" \
+    "module.exports = require('../../../$JS_PREFIX/safeguard/adapter-opencode/plugins/safeguard-tui.js')" \
+    > "$OPENCODE_TUI_PLUGIN_DIR/index.js"
+
+  require_python3_for_json_merge
+  printf '[install] enabling OpenCode TUI plugin in %s\n' "$OPENCODE_DIR/tui.json"
+  python3 "$OPENCODE_TUI_MERGER" "$OPENCODE_DIR/tui.json" "./plugins/safeguard-tui"
+fi
+
 printf '[install] done.\n'
 printf '  core installed at: %s\n' "$INSTALL_ROOT/core"
 [ "$WITH_CC" -eq 1 ] && printf '  claude-code adapter: %s\n' "$INSTALL_ROOT/adapter"
 [ "$WITH_CODEX" -eq 1 ] && printf '  codex adapter: %s\n' "$INSTALL_ROOT/adapter-codex"
-printf '\n  Commit %s/ (and host config such as .claude/settings.json or .codex/ if used)\n' "$INSTALL_ROOT"
+[ "$WITH_OPENCODE" -eq 1 ] && printf '  opencode adapter: %s\n' "$INSTALL_ROOT/adapter-opencode"
+printf '\n  Commit %s/ (and host config such as .claude/settings.json, .codex/, or .opencode/ if used)\n' "$INSTALL_ROOT"
 printf '  so that guards are available in worktrees.\n'

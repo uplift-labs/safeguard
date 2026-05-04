@@ -2,7 +2,7 @@
 # remote-install.sh — fetch safeguard and install into the current repo.
 #
 # Usage:
-#   bash <(curl -sSL https://raw.githubusercontent.com/uplift-labs/safeguard/main/remote-install.sh) [--prefix <dir>] [--with-codex] [--with-claude-code]
+#   bash <(curl -sSL https://raw.githubusercontent.com/uplift-labs/safeguard/main/remote-install.sh) [--prefix <dir>] [--with-codex] [--with-claude-code] [--with-opencode]
 #
 # Clones the repo into a temp dir, runs install.sh, cleans up.
 # Set SAFEGUARD_VERSION to pin a specific tag or branch (default: main).
